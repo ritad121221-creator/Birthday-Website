@@ -1,0 +1,362 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2026 | For My Favourite Human</title>
+    
+    <!-- Ultra-Modern Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@300;800&family=Space+Grotesk:wght@300;700&family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+
+    <!-- Animation Engines -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        :root {
+            --bg: #030303;
+            --primary: #ff3366;
+            --secondary: #7000ff;
+            --accent: #00f2ff;
+            --glass: rgba(255, 255, 255, 0.05);
+            --border: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            cursor: none;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: #fff;
+            font-family: 'Space+Grotesk', sans-serif;
+            overflow-x: hidden;
+            line-height: 1.6;
+        }
+
+        /* --- 2026 Cursor --- */
+        #cursor-trail {
+            width: 10px;
+            height: 10px;
+            background: var(--primary);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 10000;
+            box-shadow: 0 0 20px var(--primary);
+        }
+
+        /* --- Section Styling --- */
+        section {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            padding: 40px 20px;
+        }
+
+        /* --- Animation 1: The Affirmation Cloud --- */
+        .cloud-container {
+            width: 100%;
+            height: 400px;
+            position: relative;
+            overflow: hidden;
+        }
+        .bubble {
+            position: absolute;
+            background: var(--glass);
+            border: 1px solid var(--border);
+            backdrop-filter: blur(10px);
+            border-radius: 50px;
+            padding: 15px 25px;
+            white-space: nowrap;
+            color: var(--accent);
+            font-weight: bold;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            pointer-events: auto;
+            transition: transform 0.3s ease;
+        }
+        .bubble:hover {
+            border-color: var(--primary);
+            color: #fff;
+            transform: scale(1.1);
+        }
+
+        /* --- Animation 2: Infinity Heart --- */
+        .heart-path-svg {
+            width: 300px;
+            fill: none;
+            stroke: var(--primary);
+            stroke-width: 2;
+            stroke-linecap: round;
+            filter: drop-shadow(0 0 10px var(--primary));
+        }
+
+        /* --- Animation 3: Sparkle Canvas --- */
+        #sparkle-canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+        }
+
+        /* --- Hero Header --- */
+        .hero-title {
+            font-family: 'Bricolage Grotesque', sans-serif;
+            font-size: clamp(3rem, 15vw, 10rem);
+            text-align: center;
+            line-height: 0.85;
+            text-transform: uppercase;
+        }
+
+        .gradient-text {
+            background: linear-gradient(to bottom, #fff, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* --- Cake Animation --- */
+        .cake-wrapper {
+            position: relative;
+            width: 200px;
+            height: 200px;
+            transform-style: preserve-3d;
+            animation: rotateCake 10s infinite linear;
+        }
+        @keyframes rotateCake {
+            from { transform: rotateY(0deg); }
+            to { transform: rotateY(360deg); }
+        }
+        .cake-layer {
+            position: absolute;
+            width: 100%;
+            height: 60px;
+            background: var(--primary);
+            border: 2px solid white;
+            border-radius: 50%;
+            top: 100px;
+        }
+        .flame-2026 {
+            width: 20px;
+            height: 35px;
+            background: var(--accent);
+            border-radius: 50% 50% 20% 20%;
+            position: absolute;
+            top: 50px;
+            left: 90px;
+            box-shadow: 0 0 40px var(--accent);
+            animation: flick 0.2s infinite alternate;
+        }
+        @keyframes flick {
+            to { transform: scale(1.2); opacity: 0.8; }
+        }
+
+        /* --- Buttons --- */
+        .btn-2026 {
+            padding: 20px 40px;
+            border: 1px solid var(--border);
+            background: var(--glass);
+            color: white;
+            border-radius: 100px;
+            text-decoration: none;
+            font-weight: 800;
+            letter-spacing: 2px;
+            margin-top: 50px;
+            transition: 0.4s;
+            backdrop-filter: blur(10px);
+        }
+        .btn-2026:hover {
+            background: #fff;
+            color: #000;
+            transform: translateY(-5px);
+            box-shadow: 0 10px 40px var(--primary);
+        }
+
+        /* Preloader */
+        #loader {
+            position: fixed;
+            inset: 0;
+            background: #000;
+            z-index: 99999;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 2rem;
+            font-family: 'Bricolage Grotesque';
+        }
+    </style>
+</head>
+<body>
+
+    <div id="loader">INITIALIZING MAGIC...</div>
+    <div id="cursor-trail"></div>
+    <canvas id="sparkle-canvas"></canvas>
+
+    <main id="content" style="display: none;">
+        
+        <!-- SECTION 1: HERO -->
+        <section>
+            <p style="color: var(--accent); letter-spacing: 5px; margin-bottom: 20px;">FOR MY FAVORITE PERSON</p>
+            <h1 class="hero-title">HAPPY<br><span class="gradient-text">BIRTHDAY</span></h1>
+            <p style="margin-top: 30px; opacity: 0.6;">Scroll for your 2026 Digital Gift</p>
+        </section>
+
+        <!-- SECTION 2: THE AFFIRMATION CLOUD (Cute Animation 1) -->
+        <section>
+            <h2 style="margin-bottom: 50px; font-family: 'Bricolage Grotesque';">Why You're Amazing:</h2>
+            <div class="cloud-container" id="cloud">
+                <!-- Bubbles generated by JS -->
+            </div>
+        </section>
+
+        <!-- SECTION 3: INFINITY HEART (Cute Animation 2) -->
+        <section>
+            <div style="text-align: center;">
+                <svg class="heart-path-svg" viewBox="0 0 100 100">
+                    <path id="heart-path" d="M50 30 C 50 10, 90 10, 90 40 C 90 70, 50 90, 50 90 C 50 90, 10 70, 10 40 C 10 10, 50 10, 50 30" />
+                </svg>
+                <h2 style="font-family: 'Dancing Script'; font-size: 3rem; margin-top: 20px; color: var(--primary);">My Love for You is Infinite</h2>
+            </div>
+        </section>
+
+        <!-- SECTION 4: THE DIGITAL CAKE (Cute Animation 3 & 4) -->
+        <section>
+            <h2 style="margin-bottom: 80px; font-family: 'Bricolage Grotesque'; text-align: center;">MAKE A 2026 WISH</h2>
+            
+            <div class="cake-wrapper">
+                <div class="flame-2026" id="digital-flame"></div>
+                <div class="cake-layer" style="transform: translateZ(0);"></div>
+                <div class="cake-layer" style="transform: translateY(-30px);"></div>
+                <div class="cake-layer" style="transform: translateY(-60px); background: #fff;"></div>
+            </div>
+
+            <p id="wish-text" style="margin-top: 100px; color: var(--accent);">[ Click the flame to blow it out ]</p>
+            
+            <a href="javascript:void(0)" class="btn-2026" onclick="blowFlame()">BLOW OUT THE CANDLE</a>
+        </section>
+
+        <footer style="padding: 100px 20px; text-align: center; opacity: 0.3; font-size: 0.8rem;">
+            HANDCRAFTED WITH CODE FOR YOU • 2026 EDITION
+        </footer>
+    </main>
+
+    <script>
+        // --- 1. PRELOADER & SETUP ---
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                gsap.to("#loader", { opacity: 0, duration: 1, onComplete: () => {
+                    document.getElementById('loader').style.display = 'none';
+                    document.getElementById('content').style.display = 'block';
+                    initAnimations();
+                }});
+            }, 1500);
+        });
+
+        // --- 2. MAGNETIC CURSOR ---
+        const cursor = document.getElementById('cursor-trail');
+        window.addEventListener('mousemove', (e) => {
+            gsap.to(cursor, { x: e.clientX, y: e.clientY, duration: 0.3, ease: "power2.out" });
+            createSparkle(e.clientX, e.clientY);
+        });
+
+        // --- 3. SPARKLE CANVAS (Animation 3) ---
+        const canvas = document.getElementById('sparkle-canvas');
+        const ctx = canvas.getContext('2d');
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        function createSparkle(x, y) {
+            const size = Math.random() * 4;
+            ctx.fillStyle = Math.random() > 0.5 ? '#ff3366' : '#00f2ff';
+            ctx.beginPath();
+            ctx.arc(x, y, size, 0, Math.PI * 2);
+            ctx.fill();
+            // Simple fade effect
+            setTimeout(() => {
+                ctx.clearRect(x-5, y-5, 10, 10);
+            }, 500);
+        }
+
+        // --- 4. AFFIRMATION BUBBLES (Animation 1) ---
+        const words = ["Incredible", "Beautiful", "Kind Heart", "Funny", "My Favorite", "Sunshine", "Pure Magic", "Gifted", "Soulmate?"];
+        function initBubbles() {
+            const container = document.getElementById('cloud');
+            words.forEach((word, i) => {
+                const b = document.createElement('div');
+                b.className = 'bubble';
+                b.innerText = word;
+                b.style.left = Math.random() * 80 + 10 + "%";
+                b.style.top = Math.random() * 80 + 10 + "%";
+                container.appendChild(b);
+
+                // Floating Animation
+                gsap.to(b, {
+                    x: "random(-20, 20)",
+                    y: "random(-20, 20)",
+                    duration: "random(2, 4)",
+                    repeat: -1,
+                    yoyo: true,
+                    ease: "sine.inOut"
+                });
+            });
+        }
+
+        // --- 5. INFINITY HEART (Animation 2) ---
+        function initAnimations() {
+            initBubbles();
+            
+            gsap.registerPlugin(ScrollTrigger);
+            
+            // Draw heart on scroll
+            gsap.from("#heart-path", {
+                strokeDasharray: 300,
+                strokeDashoffset: 300,
+                duration: 3,
+                scrollTrigger: {
+                    trigger: ".heart-path-svg",
+                    start: "top 70%",
+                }
+            });
+        }
+
+        // --- 6. THE FINALE: BLOW FLAME ---
+        function blowFlame() {
+            const flame = document.getElementById('digital-flame');
+            const wishText = document.getElementById('wish-text');
+            
+            gsap.to(flame, { 
+                scale: 0, 
+                opacity: 0, 
+                duration: 1, 
+                onComplete: () => {
+                    wishText.innerHTML = "WISH GRANTED! 💖";
+                    triggerCelebration();
+                } 
+            });
+        }
+
+        function triggerCelebration() {
+            const count = 200;
+            const defaults = { origin: { y: 0.7 }, zIndex: 1000 };
+
+            function fire(particleRatio, opts) {
+                confetti(Object.assign({}, defaults, opts, {
+                    particleCount: Math.floor(count * particleRatio)
+                }));
+            }
+
+            fire(0.25, { spread: 26, startVelocity: 55, colors: ['#ff3366'] });
+            fire(0.2, { spread: 60, colors: ['#00f2ff'] });
+            fire(0.35, { spread: 100, decay: 0.91, scalar: 0.8 });
+            fire(0.1, { spread: 120, startVelocity: 25, decay: 0.92, scalar: 1.2 });
+        }
+    </script>
+</body>
+</html>
